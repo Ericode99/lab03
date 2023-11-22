@@ -9,21 +9,29 @@ class VirtualMachineBreak(VirtualMachineExtend):
     def __init__(self):
         super().__init__()
         self.breaks = {}
+        self.watchpoints = {}
         self.handlers |= {
-            "b": self._do_add_breakpoint,
-            "break": self._do_add_breakpoint,
+            "b": self._do_breakpoint,
+            "break": self._do_breakpoint,
             "c": self._do_clear_breakpoint,
             "clear": self._do_clear_breakpoint,
+            "w": self._do_watchpoint,
+            "watchpoint": self._do_watchpoint
         }
+
     # [/init]
 
     # [show]
-    def show(self):
-        super().show()
+    def show(self, start=-1, stop=-1):
+        super().show(start=start, stop=stop)
         if self.breaks:
             self.write("-" * 6)
             for key, instruction in self.breaks.items():
-                self.write(f"{key:06x}: {self.disassemble(key, instruction)}")
+                # adjust so that if the user wants to see range of memory the breakpoints only gets shown if its
+                # original address is within the provided range
+                if key >= start:
+                    self.write(f"{key:06x}: {self.disassemble(key, instruction)}")
+
     # [/show]
 
     # [run]
@@ -34,26 +42,31 @@ class VirtualMachineBreak(VirtualMachineExtend):
             op, arg0, arg1 = self.decode(instruction)
 
             if op == OPS["brk"]["code"]:
+                print("yeahh breakpoint")
                 original = self.breaks[self.ip]
                 op, arg0, arg1 = self.decode(original)
                 self.interact(self.ip)
                 self.ip += 1
                 self.execute(op, arg0, arg1)
-
+            elif op == OPS["wch"]["code"]:
+                self.ram[self.ip] = self.watchpoints[self.ip]
+                self.state = VMState.FINISHED
             else:
                 if self.state == VMState.STEPPING:
                     self.interact(self.ip)
                 self.ip += 1
                 self.execute(op, arg0, arg1)
+
     # [/run]
 
     # [add]
-    def _do_add_breakpoint(self, addr):
+    def _do_breakpoint(self, addr):
         if self.ram[addr] == OPS["brk"]["code"]:
             return
         self.breaks[addr] = self.ram[addr]
         self.ram[addr] = OPS["brk"]["code"]
         return True
+
     # [/add]
 
     # [clear]
@@ -63,7 +76,15 @@ class VirtualMachineBreak(VirtualMachineExtend):
         self.ram[addr] = self.breaks[addr]
         del self.breaks[addr]
         return True
+
     # [/clear]
+
+    def _do_watchpoint(self, addr):
+        if self.ram[addr] == OPS["wch"]["code"]:
+            return
+        self.watchpoints[addr] = self.ram[addr]
+        self.ram[addr] = OPS["wch"]["code"]
+        return True
 
 
 if __name__ == "__main__":

@@ -2,6 +2,7 @@ import sys
 
 from architecture import VMState
 from vm_step import VirtualMachineStep
+from architecture import RAM_LEN
 
 
 class VirtualMachineExtend(VirtualMachineStep):
@@ -20,9 +21,36 @@ class VirtualMachineExtend(VirtualMachineStep):
             "r": self._do_run,
             "run": self._do_run,
             "s": self._do_step,
-            "step": self._do_step,
+            "step": self._do_step
         }
+
     # [/init]
+
+    def get_index_of_memory(self, command):
+        assert len(command) == 2, f"format must be 'command' 'index' for command: {command}"
+        index = None
+        try:
+            index = int(command[1])
+            assert index < RAM_LEN, f"please provide an index within the bounds of RAM"
+        except ValueError:
+            print("Please provide a valid index (int) for the breakpoint")
+        return index
+
+    def call_method(self, command, addr):
+        # get all the functions which are relevant for interacting(debugger) -> start with _do_
+        functions = {
+            func_name.replace("_do_", ""): getattr(self, func_name)
+            for func_name in dir(self) if func_name.startswith("_do_") and callable(getattr(self, func_name))
+        }
+        # call associate function with the prefix of 'command'
+        method = None
+        for name in functions:
+            if name.startswith(command):
+                method = functions[name]
+        if not method:
+            self.write(f"Unknown command {command}")
+        else:
+            return method(addr)
 
     # [interact]
     def interact(self, addr):
@@ -33,13 +61,19 @@ class VirtualMachineExtend(VirtualMachineStep):
                 command = self.read(f"{addr:06x} [{prompt}]> ")
                 if not command:
                     continue
-                elif command not in self.handlers:
-                    self.write(f"Unknown command {command}")
+                # add ability of user entering range of memory display, breakpoint setting/clearing at certain index
+                elif isinstance(command, list) and "memory".startswith(command[0]):
+                    start, stop = self.get_memory_range(command)
+                    self.show(start=start, stop=stop)
+                elif isinstance(command, list):
+                    index = self.get_index_of_memory(command)
+                    self.call_method(command[0], index)
                 else:
-                    interacting = self.handlers[command](self.ip)
+                    interacting = self.call_method(command, addr)
             except EOFError:
                 self.state = VMState.FINISHED
                 interacting = False
+
     # [/interact]
 
     def _do_disassemble(self, addr):
@@ -54,6 +88,7 @@ class VirtualMachineExtend(VirtualMachineStep):
     def _do_memory(self, addr):
         self.show()
         return True
+
     # [/memory]
 
     def _do_quit(self, addr):

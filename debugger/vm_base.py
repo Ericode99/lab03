@@ -13,10 +13,13 @@ class VirtualMachineBase:
         assert len(sys.argv) == 2, f"Usage: {sys.argv[0]} program"
         with open(sys.argv[1], "r") as reader:
             lines = [ln.strip() for ln in reader.readlines()]
+        # convert hexadecimal number into int with base 10 and store in list
         program = [int(ln, 16) for ln in lines if ln]
+        # initialize VirtualMachineBase
         vm = cls()
         vm.initialize(program)
         vm.run()
+        # print result/output to console
         vm.show()
 
     # [init]
@@ -24,6 +27,7 @@ class VirtualMachineBase:
         """Set up memory."""
         self.writer = writer
         self.initialize([])
+
     # [/init]
 
     def initialize(self, program):
@@ -40,12 +44,13 @@ class VirtualMachineBase:
         while self.state != VMState.FINISHED:
             addr, op, arg0, arg1 = self.fetch()
             self.execute(op, arg0, arg1)
+
     # [/run]
 
     def fetch(self):
         """Get the next instruction."""
         assert (
-            0 <= self.ip < len(self.ram)
+                0 <= self.ip < len(self.ram)
         ), f"Program counter {self.ip:06x} out of range 0..{len(self.ram):06x}"
         old_ip = self.ip
         instruction = self.ram[self.ip]
@@ -108,6 +113,7 @@ class VirtualMachineBase:
             if self.reg[arg0] != 0:
                 self.ip = arg1
 
+
         # [prr]
         elif op == OPS["prr"]["code"]:
             self.assert_is_register(arg0)
@@ -122,24 +128,44 @@ class VirtualMachineBase:
         else:
             assert False, f"Unknown op {op:06x}"
 
-    def show(self):
+    def show(self, start=-1, stop=-1):
         """Show the IP, registers, and memory."""
         # Show IP and registers
         self.write(f"IP{' ' * 6}= {self.ip:06x}")
         for (i, r) in enumerate(self.reg):
             self.write(f"R{i:06x} = {r:06x}")
 
+        output = "# MEMORY"
+        self.write(output)
+
         # How much memory to show
-        top = max(i for (i, m) in enumerate(self.ram) if m != 0)
+        if start == -1 and stop == -1:
+            base = 0
+            top = max(i for (i, m) in enumerate(self.ram) if m != 0)
+        elif stop == -1:
+            assert start < RAM_LEN, f"provide memory address within RAM"
+            base = start
+            top = start
+        else:
+            assert start < RAM_LEN, f"provide memory address within RAM"
+            assert stop < RAM_LEN, f"provide memory address within RAM"
+            base = start
+            top = stop
 
         # Show memory
-        base = 0
-        while base <= top:
-            output = f"{base:06x}: "
-            for i in range(COLUMNS):
-                output += f"  {self.ram[base + i]:06x}"
-            self.write(output)
-            base += COLUMNS
+        if start == -1 and stop == -1:
+            while base <= top:
+                output = f"{base:06x}: "
+                for i in range(COLUMNS):
+                    output += f"  {self.ram[base + i]:06x}"
+                self.write(output)
+                base += COLUMNS
+        else:
+            for i in range(base, top + 1):
+                output = f"{base:06x}"
+                output += f"  {self.ram[base]:06x}"
+                self.write(output)
+                base += 1
 
     def assert_is_register(self, reg):
         assert 0 <= reg < len(self.reg), f"Invalid register {reg:06x}"
@@ -152,6 +178,7 @@ class VirtualMachineBase:
         msg = "".join(args) + "\n"
         self.writer.write(msg)
     # [/write]
+
 
 if __name__ == "__main__":
     VirtualMachineBase.main()
