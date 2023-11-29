@@ -1,5 +1,6 @@
 import sys
 from architecture import NUM_REG, OPS, OP_MASK, OP_SHIFT, RAM_LEN
+import math
 
 COLUMNS = 4
 DIGITS = 8
@@ -55,7 +56,9 @@ class VirtualMachine:
         running = True
         while running:
             op, arg0, arg1 = self.fetch()
-            if op == OPS["hlt"]["code"]:
+            # print('op')
+            # print(op, arg0, arg1)
+            if op == OPS["hlt"]["code"] or op == 0:
                 running = False
             elif op == OPS["ldc"]["code"]:
                 self.reg[arg0] = arg1
@@ -80,12 +83,26 @@ class VirtualMachine:
                     self.ip = arg1
             # [/beq]
             elif op == OPS["bne"]["code"]:
+                # print(arg1, 'arg1')
+                # print(self.reg[arg0])
                 if self.reg[arg0] != 0:
                     self.ip = arg1
             elif op == OPS["prr"]["code"]:
                 print(self.prompt, self.reg[arg0])
             elif op == OPS["prm"]["code"]:
                 print(self.prompt, self.ram[self.reg[arg0]])
+            elif op == OPS["inc"]["code"]:
+                self.reg[arg0] += 1
+            elif op == OPS["dec"]["code"]:
+                self.reg[arg0] -= 1
+            elif op == OPS["swp"]["code"]:
+                temp = self.reg[arg0]
+                self.reg[arg0] = self.reg[arg1]
+                self.reg[arg1] = temp
+            elif op == OPS["ldm"]["code"]:
+                self.reg[arg0] = self.ram[self.reg[arg1]]
+            elif op == OPS["div"]["code"]:
+                self.reg[arg0] = int(math.floor(self.reg[arg0]/2))
             # [/skip]
             else:
                 assert False, f"Unknown op {op:06x}"

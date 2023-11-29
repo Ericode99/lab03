@@ -1,0 +1,5 @@
+ldc R0 0
+inc R0
+inc R0
+prr R0
+hlt
