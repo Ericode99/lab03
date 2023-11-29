@@ -16,8 +16,7 @@ OPS = {
     "inc": {"code": 0xC, "fmt": "r-"},  # Increase register
     "dec": {"code": 0xD, "fmt": "r-"},  # Decrease register
     "swp": {"code": 0xE, "fmt": "rr"},  # Swap regiser values
-    "ldm": {"code": 0xF, "fmt": "rr"},  # Load memory
-    "div": {"code": 0xa, "fmt": "r-"},  # Load memory
+    "div": {"code": 0xF, "fmt": "r-"},  # Load memory
 }
 
 OP_MASK = 0xFF  # select a single byte

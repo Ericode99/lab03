@@ -99,8 +99,6 @@ class VirtualMachine:
                 temp = self.reg[arg0]
                 self.reg[arg0] = self.reg[arg1]
                 self.reg[arg1] = temp
-            elif op == OPS["ldm"]["code"]:
-                self.reg[arg0] = self.ram[self.reg[arg1]]
             elif op == OPS["div"]["code"]:
                 self.reg[arg0] = int(math.floor(self.reg[arg0]/2))
             # [/skip]

@@ -1,4 +1,4 @@
-# make the array [1, 2, 3, 4, 5]
+# make the array [1, 2, 3, 4, 5] and reverse it
 # - R0: array base address
 # - R1: array length
 # - R2: temporary
@@ -33,13 +33,15 @@ str R3 R4
 cpy R4 R0
 cpy R5 R0
 add R5 R1
-ldc R1 2
 dec R5
+
+# R1 gets converted into the loop limit by dividing it by two and then applying Math.floor().
+div R1
 
 # Loop that reverses the array in place
 loop:
-ldm R2 R4
-ldm R3 R5
+ldr R2 R4
+ldr R3 R5
 str R3 R4
 str R2 R5
 inc R4
@@ -48,3 +50,4 @@ dec R5
 dec R1
 bne R1 @loop
 hlt
+# The array is now reversed and can be seen in the memory output of the virtual machine
