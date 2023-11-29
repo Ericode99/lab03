@@ -72,6 +72,8 @@
 
 -   **div**: This instruction divides the value of a register by two and applies the Math.floor() function to it -> rounds it to the next lower integer. Syntax: `div R0`
 
+-   **example_3_3.as**: The array [1, 2, 3, 4, 5] gets created at line 35 in memory. Then a loop gets executed to reverse that array. After the program is finished, the reversed array can be found at line 35 in memory. The loop also works with different arrays. To achieve this the user can change the array base address, array length and load a different array into the memeory before the loop.
+
 #### Decisions Taken
 
 **div**
