@@ -1,4 +1,4 @@
-# Program 3: Copy and Print Memory
+# Program 2: Copy and Print Memory
 # Demonstrates: cpy, prm
 ldc R0 30    # R0 = 30 (Memory Address)
 ldc R1 99    # R1 = 99
