@@ -48,7 +48,7 @@
 
 #### Execution
 
--   the following line has to be executed in the terminal for the code to work with the LGL: `python assembler.py ../exercise_3/example_3_1.as ../exercise_3/output_3_1.mx python vm.py ../exercise_3/output_3_1.mx -`
+-   to run the programm in `example_3_1.as` run the following command in the terminal in the vm/ directory: `python assembler.py ../exercise_3/example_3_1.as ../exercise_3/output_3_1.mx python vm.py ../exercise_3/output_3_1.mx -`
 
 ### 3.2 Swap values
 
@@ -64,7 +64,7 @@
 
 #### Execution
 
--   the following line has to be executed in the terminal for the code to work with the LGL: `python`
+-   to run the programm in `example_3_2.as` run the following command in the terminal in the vm/ directory: `python assembler.py ../exercise_3/example_3_2.as ../exercise_3/output_3_2.mx python vm.py ../exercise_3/output_3_2.mx -`
 
 ### 3.3 Reverse array in place
 
@@ -80,7 +80,7 @@
 
 #### Execution
 
--   the following line has to be executed in the terminal for the code to work with the LGL: `python`
+-   to run the programm in `example_3_3.as` run the following command in the terminal in the vm/ directory: `python assembler.py ../exercise_3/example_3_3.as ../exercise_3/output_3_3.mx python vm.py ../exercise_3/output_3_3.mx -`
 
 ## 4 New features - Debugger
 
@@ -147,12 +147,3 @@
 #### Execution
 
 -   the following line has to be executed in the terminal for the code to work with the LGL: `python`
-
-Task 3 execution:
-inside vm folder run:
-
-python assembler.py ../exercise_3/example_3_2.as ../exercise_3/output_3_2.mx
-python vm.py ../exercise_3/output_3_2.mx -
-
-python assembler.py ../exercise_3/example_3_3.as ../exercise_3/output_3_3.mx
-python vm.py ../exercise_3/output_3_3.mx -
