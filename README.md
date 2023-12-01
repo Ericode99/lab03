@@ -176,10 +176,10 @@ With these tests, it is ensured that the VM handles the two mentioned errors cor
 #### Decisions Taken
 
 - To make it possible for the user to show the memory at a specific location or a specific range an additional elif statement 
-  was added to `interact` in `vm_step.py`. In it the assigned `index` or `index1` and `index2'` get tested if they within the memory range, by the newly created function `get_memory_range`
+  was added to `interact` in `vm_step.py`. In it the assigned `index` or `index1` and `index2` get tested if they within the memory range, by the newly created function `get_memory_range`
   and then assigned to the named parameters `start` and `stop` of `show`.
 - To make it  the above possible, `show` in `vm_base.py` was adjusted so that it has two named parameters `start` and `stop`
-  which are both default -1`. Depending on the value of `start` and `stop` different behaviour is exhibited.
+  which are both default -1. Depending on the value of `start` and `stop` different behaviour is exhibited.
 
 #### Execution
 
