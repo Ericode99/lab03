@@ -41,16 +41,15 @@ class VirtualMachineBreak(VirtualMachineExtend):
             instruction = self.ram[self.ip]
             op, arg0, arg1 = self.decode(instruction)
 
-            if op == OPS["brk"]["code"]:
-                print("yeahh breakpoint")
+            if not op in [1, 5, 8, 9, 10, 11, 15, 16] and arg0 in self.watchpoints:
+                self.ram[arg0] = self.watchpoints[arg0]
+                self.state = VMState.FINISHED
+            elif op == OPS["brk"]["code"]:
                 original = self.breaks[self.ip]
                 op, arg0, arg1 = self.decode(original)
                 self.interact(self.ip)
                 self.ip += 1
                 self.execute(op, arg0, arg1)
-            elif op == OPS["wch"]["code"]:
-                self.ram[self.ip] = self.watchpoints[self.ip]
-                self.state = VMState.FINISHED
             else:
                 if self.state == VMState.STEPPING:
                     self.interact(self.ip)
@@ -80,10 +79,7 @@ class VirtualMachineBreak(VirtualMachineExtend):
     # [/clear]
 
     def _do_watchpoint(self, addr):
-        if self.ram[addr] == OPS["wch"]["code"]:
-            return
         self.watchpoints[addr] = self.ram[addr]
-        self.ram[addr] = OPS["wch"]["code"]
         return True
 
 
