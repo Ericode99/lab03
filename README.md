@@ -171,65 +171,77 @@ With these tests, it is ensured that the VM handles the two mentioned errors cor
 
 #### Documentation
 
-- **Example**: example text: `example function`.
+- By typing the command 'm index' or 'm index1 index2' the content of the memory at 'index' respective everything between 'index1' and 'index2'.
 
 #### Decisions Taken
 
-**Example**
-
-- example text: `example function`.
+- To make it possible for the user to show the memory at a specific location or a specific range an additional elif statement 
+  was added to 'interact' in 'vm_step.py'. In it the assigned 'index' or 'index1' and 'index2' get tested if they within the memory range, by the newly created function 'get_memory_range'
+  and then assigned to the named parameters 'start' and 'stop' of 'show'.
+- To make it  the above possible, 'show' in 'vm_base.py' was adjusted so that it has two named parameters 'start' and 'stop'
+  which are both default '-1'. Depending on the value of 'start' and 'stop' different behaviour is exhibited.
 
 #### Execution
 
-- the following line has to be executed in the terminal for the code to work with the LGL: `python`
+- To test the newly added functionality run the program in the dictionary 'debugger' with the command 'python3 vm_step.py count_up.mx'
+  and enter the above described commands.
 
 ### 4.2 Breakpoint Addresses
 
 #### Documentation
 
-- **Example**: example text: `example function`.
+- To set a clear a breakpoint at a given address, use the commands 'b index' or 'break index' respective 
+  'c index' or 'clear index'.
 
 #### Decisions Taken
 
-**Example**
+- To set a clear a breakpoint at a given address ('index'), an addtional 'elif' statement checking for additional input other than 'memory' command, as well as the function 'get_index_of_memory' 
+  was added. Together they check if 'index' is within the memory range and if it is pass it to the already existing
+  '_do_breakpoint' respective '_do_clear_breakpoint'.
 
-- example text: `example function`.
 
 #### Execution
 
-- the following line has to be executed in the terminal for the code to work with the LGL: `python`
+- To test the newly added functionality run the program in the dictionary 'debugger' with the command 'python3 vm_break.py count_up.mx'
+  and enter the above described commands.
 
 ### 4.3 Command Completion
 
 #### Documentation
 
-- **Example**: example text: `example function`.
+- The debugger gets modified to recognize commands based on any number of distinct leading characters. For
+  example, any of 'm', 'me', 'mem', and so on triggers 'do_memory'.
 
 #### Decisions Taken
 
-**Example**
-
-- example text: `example function`.
+- To achieve the above, 'vm_extend.py' was modified by adding 'call_method' which is called in the different cases in 'interact'. 
+  It iterates over the functions of the class and if a the command entered by the user is a prefix of a valid function after the '_do_' prefix
+  the given function is called.
 
 #### Execution
 
-- the following line has to be executed in the terminal for the code to work with the LGL: `python`
+- To test the newly added functionality run the program in the dictionary 'debugger' with the command 'python3 vm_break.py count_up.mx'
+  and enter any valid command with any numbers of distinct leading characters. For example: 'mem 1 3' to show the memory range from index 1 to 3.
 
 ### 4.4 Watchpoints
 
 #### Documentation
 
-- **Example**: example text: `example function`.
+- Allows the user to create watchpoints at a given address. If the user specifies a
+  watchpoint for address 0x0010, then the VM automatically halts whenever a new value is stored at that
+  location.
 
 #### Decisions Taken
 
-**Example**
-
-- example text: `example function`.
+- To achieve the desired behaviour '_do_watchpoint' was added to 'vm_break.py'. It stores the address of the created watchpoint
+  in 'watchpoints'. 'Run' now additionally checks if the current instructions changes the memory where a watchpoint is set. 
+  If this is the case the program halts.
 
 #### Execution
 
-- the following line has to be executed in the terminal for the code to work with the LGL: `python`
+- To test the newly added functionality run the program in the dictionary 'debugger' with the command 'python3 vm_break.py count_up.mx'
+  and enter any numbers of distinct leading characters of the command watchpoint with the desired index to set the watchpoint at. 
+  For example: 'wa 2' to set a watchpoint at address 2.
 
 Task 3 execution:
 inside vm folder run:
